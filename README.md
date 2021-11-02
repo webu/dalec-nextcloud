@@ -1,15 +1,15 @@
-# dalec-discourse
+# dalec-nextcloud
 
-Django Aggregate a Lot of External Content -- Discourse
+Django Aggregate a Lot of External Content -- Nextcloud
 
-Aggregate last discourse issue or event from a given discourse instance.
+Aggregate last discourse issue or event from a given nextcloud instance.
 
 Plugin of [dalec](https://dev.webu.coop/w/i/dalec).
 
 ## Installation
 
 ```
-pip install dalec_discourse
+pip install dalec_nextcloud
 ```
 
 In django settings `INSTALLED_APPS`, add:
@@ -19,7 +19,7 @@ INSTALLED_APPS = [
     ...
     "dalec",
     "dalec_prime",
-    "dalec_discourse",
+    "dalec_nextcloud",
     ...
     ]
 ```
@@ -31,28 +31,16 @@ General usage:
 ```django
 {% load dalec %}
 
-{% dalec "discourse" content_type [channel=None] [channel_object=None] [template=None] %}
+{% dalec "nextcloud" content_type [channel=None] [channel_object=None] [template=None] %}
 ```
 
 Real examples:
 
 ### Topics
 
-Retrieves latest topics:
+Retrieves latest activities:
 ```django
-{% dalec "discourse" "topic" %}
-```
-
-Retrieves latest topics from a category:
-```django
-{% dalec "discourse" "tpic" channel="category" channel_object="15" %}
-```
-
-### Categories
-
-Retrieves discourse categories:
-```django
-{% dalec "discourse" "category" %}
+{% dalec "discourse" "activity" %}
 ```
 
 
@@ -60,8 +48,8 @@ Retrieves discourse categories:
 
 Django settings must define:
 
-  - `DALEC_DISCOURSE_BASE_URL` : discourse instance url (ex: `https://discourse.org/`)
-  - `DALEC_DISCOURSE_API_USERNAME` : discourse username (ex: `admin`)
-  - `DALEC_DISCOURSE_API_TOKEN` : discourse api token (ex: `azeazeaezdfqsmlkrjzr`)
+  - `DALEC_NEXTCLOUD_BASE_URL` : nextcloud instance url (ex: `https://nextcloud.org/`)
+  - `DALEC_NEXTCLOUD_API_USERNAME` : nextcloud username (ex: `admin`)
+  - `DALEC_NEXTCLOUD_API_PASSWORD` : nextcloud user password (ex: `azeazeaezdfqsmlkrjzr`)
 
 
