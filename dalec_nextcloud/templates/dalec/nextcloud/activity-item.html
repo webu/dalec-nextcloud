@@ -1,8 +1,28 @@
 {% extends "dalec/default/item.html" %}
+{% load dalec %}
 {% block item_content %}
 <div>
-    {{object.content_data.datetime|api_date|timesince}}
-    
+    <div>
+        <div class="activity-subject">
+            <img src="{{object.content_data.icon}}" alt=""/>
+            {{object.content_data.subject}}
+        </div>
+        <div class="activity-time">
+            il y a
+            {{object.content_data.datetime|api_date|timesince}}
+        </div>
+    </div>
+    {% if object.content_data.app == "comments" %}
+    <div class="activity-message">
+        {{object.content_data.message}}
+    </div>
+    {% else %}
+    <div class="activity-preview">
+        <a href="{{object.content_data.link}}" target="_blank">
+            {{object.content_data.object_name}}
+        </a>
+    </div>
+    {% endif %}
 </div>
 
 
