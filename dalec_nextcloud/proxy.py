@@ -28,29 +28,72 @@ class NextcloudProxy(Proxy):
         self, nb: int, content_type: str, channel: str, channel_object: str
     ) -> Dict[str, dict]:
         if content_type == "activity":
-            return self._fetch_activiy(nb, channel, channel_object)
+            return self._fetch_activity_file(nb, channel, channel_object)
 
         raise ValueError(f"Invalid content_type {content_type}. Accepted: topic, category." )
 
-    def _fetch_activity(self, nb, channel=None, channel_object=None):
+    def _fetch_activity_file(self, nb, channel=None, channel_object=None):
         """
         Get latest activities from entire nextcloud or channel
         """
         options = {
-                "per_page": nb,
+                "limit": nb,
                 }
 
-        activities = client.get_activities(
-                channel_type=channel,
-                channel_id=channel_object,
-                **options
-                ).data
+        if channel:
+            if channel not in ["files"]:
+                raise ValueError(
+                    """Value `{}` is not a correct value for channel type and Activity.
+                    It must be either "files" or None.
+                    """.format(
+                        channel
+                    )
+                )
+            if not channel_object:
+                raise ValueError(
+                        """channel_object must be provided together with channel"""
+                        )
+        elif channel_object:
+            raise ValueError("channel must be provided together with channel_object")
 
+        def _list_rec(d, files):
+            # list files recursively
+            files.append(d)
+            if d.isdir():
+                for i in d.list():
+                    _list_rec(i, files=files)
+
+        # get base path
+        if channel == "files":
+            base_file = client.get_activities(
+                    object_type="files",
+                    object_id=channel_object
+                    ).data[0]["object_name"]
+            
+            base_file_obj= client.get_file(base_file)
+            files = []
+            _list_rec(base_file_obj, files)
+
+            activities = []
+            for f in files:
+                f_activities = client.get_activities(
+                            object_type="files",
+                            object_id=f.file_id,
+                            **options
+                            )
+                if f_activities.is_ok:
+                    activities += f_activities.data
+
+        else:
+            activities = client.get_activities(
+                    **options,
+                    ).data
 
         contents = {}
         for activity in activities:
-            contents[activity["activity_id"]] = {
+            contents[str(activity["activity_id"])] = {
                     **activity,
+                    "id": activity["activity_id"],
                     "last_update_dt": now(),
                     "creation_dt": activity["datetime"]
                     }
