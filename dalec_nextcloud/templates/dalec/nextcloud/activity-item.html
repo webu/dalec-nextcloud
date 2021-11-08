@@ -1,40 +1,33 @@
 {% extends "dalec/default/item.html" %}
 {% load dalec %}
 {% block item_content %}
-<div>
-    <div>
-        <div class="activity-subject">
+<tr>
+    <td class="nextcloud activity subject">
             <img src="{{object.content_data.icon}}" alt=""/>
             {{object.content_data.subject}}
+    </td>
+    <td class="nexctloud activity item"></td>
+    <td class="nextcloud activity time">
+        {{object.content_data.datetime|api_date}}
+    </td>
+    <td class="nextcloud activity action">
+        <div>
+            {% if object.content_data.app == "comments" %}
+            {{object.content_data.message}}
+            {% else %}
+            <a href="{{object.content_data.link}}" target="_blank">
+                {{object.content_data.object_name}}
+            </a>
+            {% endif %}
         </div>
-        <div class="activity-time">
-            il y a
-            {{object.content_data.datetime|api_date|timesince}}
-        </div>
-    </div>
-    {% if object.content_data.app == "comments" %}
-    <div class="activity-message">
-        {{object.content_data.message}}
-    </div>
-    {% else %}
-    <div class="activity-preview">
-        <a href="{{object.content_data.link}}" target="_blank">
-            {{object.content_data.object_name}}
-        </a>
-    </div>
-    {% endif %}
-</div>
-
-
-<div>
-    <button id="btnFadetoggle"
-            class="btn btn-primary"
-            type="button"
-            onclick="$('.api-full').fadeToggle();"
-            >
-            Voir tout le retour de l'API
-    </button>
-    <pre class="api-full" style="display: none;"> {{ object.content_data|pprint }} </pre>
-</div>
-<hr>
+        <button id="btnFadetoggle"
+                class="btn btn-primary"
+                type="button"
+                onclick="$('.api-full').fadeToggle();"
+                >
+                Voir tout le retour de l'API
+        </button>
+        <pre class="api-full" style="display: none;"> {{ object.content_data|pprint }} </pre>
+    </td>
+</tr>
 {% endblock %}
