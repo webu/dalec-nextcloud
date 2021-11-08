@@ -36,11 +36,20 @@ General usage:
 
 Real examples:
 
-### Topics
+### Activity
 
-Retrieves latest activities:
+Retrieves latest activities.
+
+ - If `channel` is `"files"`, retrieve only for this file or directory.
+ - If `channel` is `"files_and_childs"`, retrieve recursively from this folder and child.
+ - If `channel` is `None`, retrieve all activities.
+
+`channel_object` is the nextcloud file_id.
+
 ```django
-{% dalec "discourse" "activity" %}
+{% dalec "nexctloud" "activity" %}
+{% dalec "nexctloud" "activity" channel="files" channel_object="55145"%}
+{% dalec "nexctloud" "activity" channel="files_and_childs" channel_object="55145"%}
 ```
 
 

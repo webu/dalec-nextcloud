@@ -41,10 +41,10 @@ class NextcloudProxy(Proxy):
                 }
 
         if channel:
-            if channel not in ["files"]:
+            if channel not in ["files", "files_and_childs"]:
                 raise ValueError(
                     """Value `{}` is not a correct value for channel type and Activity.
-                    It must be either "files" or None.
+                    It must be either : files, files_and_childs or None.
                     """.format(
                         channel
                     )
@@ -63,8 +63,16 @@ class NextcloudProxy(Proxy):
                 for i in d.list():
                     _list_rec(i, files=files)
 
-        # get base path
         if channel == "files":
+            # retrieve only activity of one file/folder
+            activities = client.get_activities(
+                    **options,
+                    object_type="files",
+                    object_id=channel_object,
+                    ).data
+        elif channel == "files_and_childs":
+            # retrieve activity of a folder and sub-directories/files recursively
+            # get base path
             base_file = client.get_activities(
                     object_type="files",
                     object_id=channel_object
@@ -83,8 +91,8 @@ class NextcloudProxy(Proxy):
                             )
                 if f_activities.is_ok:
                     activities += f_activities.data
-
         else:
+            # retrieve all activities
             activities = client.get_activities(
                     **options,
                     ).data
