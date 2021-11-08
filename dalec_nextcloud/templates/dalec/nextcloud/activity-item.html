@@ -8,7 +8,7 @@
     </td>
     <td class="nexctloud activity item"></td>
     <td class="nextcloud activity time">
-        {{object.content_data.datetime|api_date}}
+        {{object.content_data.datetime|to_datetime:"%Y-%m-%dT%H:%M:%S%z"|date:"DATE_FORMAT"}}
     </td>
     <td class="nextcloud activity action">
         <div>
