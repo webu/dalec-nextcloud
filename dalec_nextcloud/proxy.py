@@ -30,7 +30,7 @@ class NextcloudProxy(Proxy):
         if content_type == "activity":
             return self._fetch_activity_file(nb, channel, channel_object)
 
-        raise ValueError(f"Invalid content_type {content_type}. Accepted: topic, category." )
+        raise ValueError(f"Invalid content_type {content_type}. Accepted: activity." )
 
     def _fetch_activity_file(self, nb, channel=None, channel_object=None):
         """
@@ -65,20 +65,16 @@ class NextcloudProxy(Proxy):
 
         if channel == "files":
             # retrieve only activity of one file/folder
+            file_id = client.get_file(channel_object)
             activities = client.get_activities(
                     **options,
                     object_type="files",
-                    object_id=channel_object,
+                    object_id=file_id,
                     ).data
         elif channel == "files_and_childs":
             # retrieve activity of a folder and sub-directories/files recursively
             # get base path
-            base_file = client.get_activities(
-                    object_type="files",
-                    object_id=channel_object
-                    ).data[0]["object_name"]
-            
-            base_file_obj= client.get_file(base_file)
+            base_file_obj= client.get_file(channel_object)
             files = []
             _list_rec(base_file_obj, files)
 
@@ -101,7 +97,7 @@ class NextcloudProxy(Proxy):
         for activity in activities:
             contents[str(activity["activity_id"])] = {
                     **activity,
-                    "id": activity["activity_id"],
+                    "id": str(activity["activity_id"]),
                     "last_update_dt": now(),
                     "creation_dt": activity["datetime"]
                     }
