@@ -95,9 +95,10 @@ class NextcloudProxy(Proxy):
 
         contents = {}
         for activity in activities:
-            contents[str(activity["activity_id"])] = {
+            activity["activity_id"] = str(activity["activity_id"])
+            contents[activity["activity_id"])] = {
                     **activity,
-                    "id": str(activity["activity_id"]),
+                    "id": activity["activity_id"],
                     "last_update_dt": now(),
                     "creation_dt": activity["datetime"]
                     }
