@@ -56,13 +56,6 @@ class NextcloudProxy(Proxy):
         elif channel_object:
             raise ValueError("channel must be provided together with channel_object")
 
-        def _list_rec(d, files):
-            # list files recursively
-            files.append(d)
-            if d.isdir():
-                for i in d.list():
-                    _list_rec(i, files=files)
-
         if channel == "files":
             # retrieve only activity of one file/folder
             file_id = client.get_file(channel_object)
@@ -74,9 +67,22 @@ class NextcloudProxy(Proxy):
         elif channel == "files_and_childs":
             # retrieve activity of a folder and sub-directories/files recursively
             # get base path
-            base_file_obj= client.get_file(channel_object)
-            files = []
-            _list_rec(base_file_obj, files)
+            
+            try:
+                file_id = int(channel_object)
+                # should be 
+                # base_file_obj = client.fetch_files_with_filter(path="/", filter_rules={"oc": {"fileid": file_id}}).data[0]
+                # but it doesn't work...
+                base_file_obj= [f for f in client.list_folders("/").data if f.file_id == file_id]
+                if base_file_obj:
+                    base_file_obj = base_file_obj[0]
+            except ValueError:
+                base_file_obj= client.get_file(channel_object)
+
+            if not base_file_obj:
+                raise FileNotFoundError(f"channel object not found: {channel_object}")
+
+            files = client.list_folders(base_file_obj.get_relative_path(), depth=999).data
 
             activities = []
             for f in files:
