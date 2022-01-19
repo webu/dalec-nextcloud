@@ -11,10 +11,10 @@ from dalec.proxy import Proxy
 from nextcloud import NextCloud
 
 client = NextCloud(
-        endpoint=settings.DALEC_NEXTCLOUD_BASE_URL,
-        user=settings.DALEC_NEXTCLOUD_API_USERNAME,
-        password=settings.DALEC_NEXTCLOUD_API_PASSWORD,
-        )
+    endpoint=settings.DALEC_NEXTCLOUD_BASE_URL,
+    user=settings.DALEC_NEXTCLOUD_API_USERNAME,
+    password=settings.DALEC_NEXTCLOUD_API_PASSWORD,
+)
 
 
 class NextcloudProxy(Proxy):
@@ -30,15 +30,13 @@ class NextcloudProxy(Proxy):
         if content_type == "activity":
             return self._fetch_activity_file(nb, channel, channel_object)
 
-        raise ValueError(f"Invalid content_type {content_type}. Accepted: activity." )
+        raise ValueError(f"Invalid content_type {content_type}. Accepted: activity.")
 
     def _fetch_activity_file(self, nb, channel=None, channel_object=None):
         """
         Get latest activities from entire nextcloud or channel
         """
-        options = {
-                "limit": nb,
-                }
+        options = {"limit": nb}
 
         if channel:
             if channel not in ["files", "files_and_childs"]:
@@ -51,8 +49,8 @@ class NextcloudProxy(Proxy):
                 )
             if not channel_object:
                 raise ValueError(
-                        """channel_object must be provided together with channel"""
-                        )
+                    """channel_object must be provided together with channel"""
+                )
         elif channel_object:
             raise ValueError("channel must be provided together with channel_object")
 
@@ -60,53 +58,50 @@ class NextcloudProxy(Proxy):
             # retrieve only activity of one file/folder
             file_id = client.get_file(channel_object)
             activities = client.get_activities(
-                    **options,
-                    object_type="files",
-                    object_id=file_id,
-                    ).data
+                **options, object_type="files", object_id=file_id
+            ).data
         elif channel == "files_and_childs":
             # retrieve activity of a folder and sub-directories/files recursively
             # get base path
-            
+
             try:
                 file_id = int(channel_object)
-                # should be 
+                # should be
                 # base_file_obj = client.fetch_files_with_filter(path="/", filter_rules={"oc": {"fileid": file_id}}).data[0]
                 # but it doesn't work...
-                base_file_obj= [f for f in client.list_folders("/").data if f.file_id == file_id]
+                base_file_obj = [
+                    f for f in client.list_folders("/").data if f.file_id == file_id
+                ]
                 if base_file_obj:
                     base_file_obj = base_file_obj[0]
             except ValueError:
-                base_file_obj= client.get_file(channel_object)
+                base_file_obj = client.get_file(channel_object)
 
             if not base_file_obj:
                 raise FileNotFoundError(f"channel object not found: {channel_object}")
 
-            files = client.list_folders(base_file_obj.get_relative_path(), depth=999).data
+            files = client.list_folders(
+                base_file_obj.get_relative_path(), depth=999
+            ).data
 
             activities = []
             for f in files:
                 f_activities = client.get_activities(
-                            object_type="files",
-                            object_id=f.file_id,
-                            **options
-                            )
+                    object_type="files", object_id=f.file_id, **options
+                )
                 if f_activities.is_ok:
                     activities += f_activities.data
         else:
             # retrieve all activities
-            activities = client.get_activities(
-                    **options,
-                    ).data
+            activities = client.get_activities(**options).data
 
         contents = {}
         for activity in activities:
             activity["activity_id"] = str(activity["activity_id"])
             contents[activity["activity_id"]] = {
-                    **activity,
-                    "id": activity["activity_id"],
-                    "last_update_dt": now(),
-                    "creation_dt": activity["datetime"]
-                    }
+                **activity,
+                "id": activity["activity_id"],
+                "last_update_dt": now(),
+                "creation_dt": activity["datetime"],
+            }
         return contents
-
