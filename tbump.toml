@@ -1,5 +1,5 @@
 [version]
-current = "0.0.0-rc0"
+current = "0.0.0-rc.0"
 
 # valid versions:
 # we use semver
@@ -18,7 +18,7 @@ regex = '''
     -
     (
       (?P<channel>alpha|beta|rc)
-      .
+      \.
       (?P<release>\d+)
     )
   )?
@@ -46,14 +46,14 @@ tag_template = "{new_version}"
 # section containing the path of the file, relative to the
 # tbump.toml location.
 [[file]]
-src = "dalec/__init__.py"
+src = "dalec_nextcloud/__init__.py"
 
 # You can specify a list of commands to
 # run after the files have been patched
 # and before the git commit is made
 
  [[before_commit]]
- name = "check changelog"
+ name = "check black"
  cmd = "black ./"
 
 # Or run some commands after the git tag and the branch
