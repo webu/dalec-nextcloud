@@ -84,8 +84,15 @@ class NextcloudProxy(Proxy):
                 base_file_obj.get_relative_path(), depth=999
             ).data
 
+            # sanity check... needed
+            files = [f for f in files if f.last_modified]
+
+            # The last nb modification are at least the last nth modified file.
+            # It could be less (3 times modification of the same file), but we can not
+            # know.
+            last_nth_modificated_files = sorted(files, key=lambda x: x.last_modified_datetime, reverse=True)[:nb]
             activities = []
-            for f in files:
+            for f in last_nth_modificated_files:
                 f_activities = client.get_activities(
                     object_type="files", object_id=f.file_id, **options
                 )
@@ -96,6 +103,7 @@ class NextcloudProxy(Proxy):
             activities = client.get_activities(**options).data
 
         contents = {}
+        # TODO limit to nb last activities
         for activity in activities:
             activity["activity_id"] = str(activity["activity_id"])
             contents[activity["activity_id"]] = {
