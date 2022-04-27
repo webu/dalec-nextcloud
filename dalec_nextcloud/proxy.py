@@ -90,7 +90,9 @@ class NextcloudProxy(Proxy):
             # The last nb modification are at least the last nth modified file.
             # It could be less (3 times modification of the same file), but we can not
             # know.
-            last_nth_modificated_files = sorted(files, key=lambda x: x.last_modified_datetime, reverse=True)[:nb]
+            last_nth_modificated_files = sorted(
+                files, key=lambda x: x.last_modified_datetime, reverse=True
+            )[:nb]
             activities = []
             for f in last_nth_modificated_files:
                 f_activities = client.get_activities(
