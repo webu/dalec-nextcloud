@@ -1,13 +1,12 @@
-from datetime import timedelta
+# Standard libs
 from typing import Dict
-import requests
 
-from django.utils.dateparse import parse_datetime
-from django.utils.timezone import now
+# Django imports
 from django.conf import settings
+from django.utils.timezone import now
 
+# DALEC imports
 from dalec.proxy import Proxy
-
 from nextcloud import NextCloud
 
 client = NextCloud(
@@ -48,9 +47,7 @@ class NextcloudProxy(Proxy):
                     )
                 )
             if not channel_object:
-                raise ValueError(
-                    """channel_object must be provided together with channel"""
-                )
+                raise ValueError("""channel_object must be provided together with channel""")
         elif channel_object:
             raise ValueError("channel must be provided together with channel_object")
 
@@ -69,9 +66,7 @@ class NextcloudProxy(Proxy):
                 # should be
                 # base_file_obj = client.fetch_files_with_filter(path="/", filter_rules={"oc": {"fileid": file_id}}).data[0]
                 # but it doesn't work...
-                base_file_obj = [
-                    f for f in client.list_folders("/").data if f.file_id == file_id
-                ]
+                base_file_obj = [f for f in client.list_folders("/").data if f.file_id == file_id]
                 if base_file_obj:
                     base_file_obj = base_file_obj[0]
             except ValueError:
@@ -80,9 +75,7 @@ class NextcloudProxy(Proxy):
             if not base_file_obj:
                 raise FileNotFoundError(f"channel object not found: {channel_object}")
 
-            files = client.list_folders(
-                base_file_obj.get_relative_path(), depth=999
-            ).data
+            files = client.list_folders(base_file_obj.get_relative_path(), depth=999).data
 
             # sanity check... needed
             files = [f for f in files if f.last_modified]

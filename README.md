@@ -2,9 +2,9 @@
 
 Django Aggregate a Lot of External Content -- Nextcloud
 
-Aggregate last discourse issue or event from a given nextcloud instance.
+Aggregate last nextcloud files activity from a given nextcloud instance.
 
-Plugin of [dalec](https://dev.webu.coop/w/i/dalec).
+Plugin of [dalec](https://github.com/webu/dalec).
 
 ## Installation
 
@@ -44,7 +44,7 @@ Retrieves latest activities.
  - If `channel` is `"files_and_childs"`, retrieve recursively from this folder and child.
  - If `channel` is `None`, retrieve all activities.
 
-`channel_object` is the nextcloud file_id.
+`channel_object` is the nextcloud `file_id`.
 
 ```django
 {% dalec "nexctloud" "activity" %}
