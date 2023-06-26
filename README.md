@@ -1,10 +1,10 @@
-# dalec-nextcloud
+# ☁ dalec-nextcloud
 
 Django Aggregate a Lot of External Content -- Nextcloud
 
 Aggregate last nextcloud files activity from a given nextcloud instance.
 
-Plugin of [dalec](https://github.com/webu/dalec).
+Plugin of [🤖 dalec](https://github.com/webu/dalec).
 
 ## Installation
 
