@@ -13,11 +13,10 @@ import sys
 
 sys.path.insert(0, os.path.abspath("../.."))
 
-
 # DALEC imports
 from dalec_nextcloud import __version__ as dalec_version
 
-project = "Dalec"
+project = "Dalec - Nextcloud"
 copyright = "2023, Webu"
 author = "Webu"
 release = dalec_version
