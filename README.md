@@ -14,7 +14,7 @@ Plugin of [🤖 dalec](https://github.com/webu/dalec).
 ## Installation
 
 ```
-pip install dalec_nextcloud
+pip install dalec-nextcloud
 ```
 
 In django settings `INSTALLED_APPS`, add:
